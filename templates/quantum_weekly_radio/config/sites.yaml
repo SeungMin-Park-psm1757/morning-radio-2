@@ -1,0 +1,96 @@
+sources:
+  - key: tqi_daily
+    label: The Quantum Insider / Daily
+    start_urls:
+      - https://thequantuminsider.com/category/daily/
+    collection_mode: html_list
+    kind: hard_news
+    max_items_per_run: 40
+
+  - key: tqi_national
+    label: The Quantum Insider / National
+    start_urls:
+      - https://thequantuminsider.com/category/daily/national/
+    collection_mode: html_list
+    kind: hard_news
+    max_items_per_run: 20
+
+  - key: tqi_business
+    label: The Quantum Insider / Business
+    start_urls:
+      - https://thequantuminsider.com/category/daily/business/
+    collection_mode: html_list
+    kind: hard_news
+    max_items_per_run: 20
+
+  - key: tqi_research
+    label: The Quantum Insider / Research & Tech
+    start_urls:
+      - https://thequantuminsider.com/category/daily/researchandtech/
+    collection_mode: html_list
+    kind: research
+    max_items_per_run: 20
+
+  - key: tqi_education
+    label: The Quantum Insider / Education
+    start_urls:
+      - https://thequantuminsider.com/category/exclusives/education/
+    collection_mode: html_list
+    kind: context
+    max_items_per_run: 8
+
+  - key: tqi_insights
+    label: The Quantum Insider / Insights
+    start_urls:
+      - https://thequantuminsider.com/category/exclusives/insights/
+    collection_mode: html_list
+    kind: context
+    max_items_per_run: 8
+
+  - key: physorg_quantum
+    label: Phys.org / Quantum Physics
+    start_urls:
+      - https://phys.org/physics-news/quantum-physics/?hl=ko-KR
+    collection_mode: rss_then_html
+    kind: research
+    max_items_per_run: 30
+
+  - key: quantumzeitgeist_research
+    label: Quantum Zeitgeist / Quantum Research News
+    start_urls:
+      - https://quantumzeitgeist.com/category/quantum-research-news/
+    collection_mode: html_list
+    kind: research
+    max_items_per_run: 25
+
+  - key: qcr_news
+    label: Quantum Computing Report / News
+    start_urls:
+      - https://quantumcomputingreport.com/news/
+    collection_mode: html_list
+    kind: hard_news
+    max_items_per_run: 25
+
+  - key: qcr_our_take
+    label: Quantum Computing Report / Our Take
+    start_urls:
+      - https://quantumcomputingreport.com/our-take/
+    collection_mode: html_list
+    kind: context
+    max_items_per_run: 10
+
+  - key: qcr_qnalysis
+    label: Quantum Computing Report / Qnalysis
+    start_urls:
+      - https://quantumcomputingreport.com/qnalysis/
+    collection_mode: html_list
+    kind: context
+    max_items_per_run: 8
+
+  - key: quantumfrontiers_news
+    label: Quantum Frontiers / News
+    start_urls:
+      - https://quantumfrontiers.com/category/news/
+    collection_mode: rss_then_html
+    kind: context
+    max_items_per_run: 10

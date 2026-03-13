@@ -18,6 +18,7 @@ dependencies = [
 
 [project.scripts]
 morning-radio = "morning_radio.cli:main"
+morning-radio-weekly-quantum = "morning_radio.weekly_quantum.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
