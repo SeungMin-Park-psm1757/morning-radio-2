@@ -17,6 +17,10 @@ def make_config(**overrides: object) -> WeeklyQuantumConfig:
         budget_mode="low",
         request_timeout_seconds=20,
         retry_count=2,
+        editor_model="gemini-2.5-flash",
+        triage_model="gemini-2.5-flash-lite",
+        tts_model="gemini-2.5-flash-preview-tts",
+        max_output_tokens=4096,
         enable_tts=True,
         enable_telegram=True,
         skip_llm=True,
@@ -25,6 +29,12 @@ def make_config(**overrides: object) -> WeeklyQuantumConfig:
         dry_run=True,
         host_name="민준",
         analyst_name="서연",
+        host_voice="Charon",
+        analyst_voice="Leda",
+        tts_speed_multiplier=1.0,
+        tts_turn_pause_multiplier=1.0,
+        tts_retry_count=1,
+        tts_retry_delay_seconds=40,
     )
     for key, value in overrides.items():
         setattr(config, key, value)
