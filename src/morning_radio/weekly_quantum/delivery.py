@@ -19,7 +19,6 @@ def deliver_weekly_bundle(
     digest_markdown: str,
     title: str,
     full_audio_path: Path | None,
-    headlines_audio_path: Path | None,
     public_links: dict[str, str] | None = None,
 ) -> DeliveryResult:
     result = DeliveryResult()
@@ -45,15 +44,6 @@ def deliver_weekly_bundle(
         except Exception as exc:
             result.errors.append(f"telegram_full_audio_failed:{exc}")
 
-    if headlines_audio_path is not None and not headlines_audio_path.exists():
-        result.errors.append("weekly_headlines_missing")
-    elif headlines_audio_path is not None:
-        try:
-            message_id = _send_audio_bundle(config, headlines_audio_path, caption=f"{title} 헤드라인")
-            result.headlines_audio_sent = True
-            result.message_ids.append(message_id)
-        except Exception as exc:
-            result.errors.append(f"telegram_headlines_audio_failed:{exc}")
     return result
 
 
@@ -62,7 +52,6 @@ def public_links_for_run(
     config: WeeklyQuantumConfig,
     run_dir: Path,
     full_audio_path: Path | None,
-    headlines_audio_path: Path | None,
 ) -> dict[str, str] | None:
     base_url = (config.public_archive_base_url or "").strip()
     if not base_url:
@@ -76,8 +65,6 @@ def public_links_for_run(
     }
     if full_audio_path is not None and full_audio_path.exists():
         links["full_audio"] = f"{run_base}/{full_audio_path.name}"
-    if headlines_audio_path is not None and headlines_audio_path.exists():
-        links["headlines_audio"] = f"{run_base}/{headlines_audio_path.name}"
     return links
 
 
@@ -199,7 +186,6 @@ def _append_public_links(text: str, public_links: dict[str, str] | None) -> str:
         ("summary", "실행 요약"),
         ("digest", "메시지 요약"),
         ("full_audio", "전체 MP3"),
-        ("headlines_audio", "헤드라인 MP3"),
     )
     lines = ["<b>바로가기</b>"]
     for key, label in labels:

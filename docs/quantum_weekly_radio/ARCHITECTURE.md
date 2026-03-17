@@ -22,7 +22,6 @@ Stabilize the weekly path first, then optionally extract shared helpers later.
    - headlines-only script
 10. Generate TTS:
    - weekly_full.mp3
-   - weekly_headlines.mp3
 11. Deliver to Telegram
 12. Persist outputs + run state + source health
 

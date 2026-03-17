@@ -5,10 +5,10 @@
 Extend the existing `morning_radio` repository with a new additive pipeline that creates a **weekly quantum-technology morning show**.
 
 The new pipeline must:
-- run every Monday at 06:30 KST,
+- run every Monday at 06:00 KST,
 - collect from the approved source sites below,
 - reuse the current repo’s proven ranking / dedup / Telegram / TTS ideas where safe,
-- and produce one weekly text digest plus two MP3 files.
+- and produce one weekly text digest plus one MP3 file.
 
 ## Approved source sites
 
@@ -32,7 +32,6 @@ The new pipeline must:
 ### External outputs
 - weekly Telegram text digest
 - `weekly_full.mp3`
-- `weekly_headlines.mp3`
 
 ### Internal run outputs
 - `raw_items.json`
@@ -56,7 +55,7 @@ The new pipeline must:
 - Preserve the spirit of the current dedup logic, but make it global across all sources before expensive summarization.
 - Keep API costs low by using list-page summaries / RSS summaries / site-provided bullets whenever possible.
 - Fetch article detail pages only for deduplicated representatives.
-- TTS should be used only for the final two scripts.
+- TTS should be used only for the final full weekly script.
 - The system must continue working in degraded mode when:
   - one or more sources fail,
   - TTS fails,
@@ -95,7 +94,7 @@ The weekly quantum system is ready when:
 2. the new workflow can run on schedule,
 3. global dedup works across all configured sources,
 4. a smoke path exists for `--skip-llm --skip-tts`,
-5. text digest and two MP3 deliverables are generated,
+5. text digest and one MP3 deliverable are generated,
 6. Telegram delivery is bundled,
 7. source health is recorded,
 8. tests exist for deterministic logic.
