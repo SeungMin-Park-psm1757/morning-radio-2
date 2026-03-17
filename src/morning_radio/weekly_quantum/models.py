@@ -110,11 +110,14 @@ class WeeklyShow:
     window_end: datetime
     host_name: str
     analyst_name: str
+    show_title: str
+    show_summary: str
     opening: str
     segments: list[dict[str, Any]]
     closing: str
     headline_script_text: str
     full_script_text: str
+    full_script_markdown: str
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -122,11 +125,14 @@ class WeeklyShow:
             "window_end": self.window_end.isoformat(),
             "host_name": self.host_name,
             "analyst_name": self.analyst_name,
+            "show_title": self.show_title,
+            "show_summary": self.show_summary,
             "opening": self.opening,
             "segments": self.segments,
             "closing": self.closing,
             "headline_script_text": self.headline_script_text,
             "full_script_text": self.full_script_text,
+            "full_script_markdown": self.full_script_markdown,
         }
 
 
