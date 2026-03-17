@@ -15,7 +15,7 @@ The new work in this repo is a **weekly quantum-only** pipeline that should reus
 ## Primary goal
 
 Add a new pipeline that:
-- runs every Monday 06:30 KST,
+- runs every Monday 06:00 KST,
 - covers the last successful-run window for the approved quantum source sites,
 - gathers articles directly from site category pages / RSS / lightweight detail pages,
 - deduplicates globally across all sources,

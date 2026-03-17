@@ -117,4 +117,3 @@ Recommended run outputs:
 - `summary.md`
 - `run_metadata.json`
 - `weekly_full.mp3`
-- `weekly_headlines.mp3`

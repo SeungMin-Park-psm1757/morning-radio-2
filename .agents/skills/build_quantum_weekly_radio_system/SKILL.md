@@ -16,7 +16,7 @@ description: Build the full weekly quantum morning-radio pipeline inside the exi
 
     ## Goal
     Extend the current repository with a weekly quantum-only pipeline that:
-    - runs Monday 06:30 KST,
+    - runs Monday 06:00 KST,
     - collects directly from approved sites,
     - deduplicates globally,
     - produces one digest plus two MP3 files,
@@ -44,4 +44,3 @@ description: Build the full weekly quantum morning-radio pipeline inside the exi
     - smoke mode exists,
     - outputs match `docs/quantum_weekly_radio/OUTPUT_SPEC.md`,
     - and deterministic tests exist for the core logic.
-

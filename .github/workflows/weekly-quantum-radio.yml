@@ -16,8 +16,8 @@ on:
         required: false
         default: "false"
   schedule:
-    # Monday 06:30 KST == Sunday 21:30 UTC
-    - cron: "30 21 * * 0"
+    # Monday 06:00 KST == Sunday 21:00 UTC
+    - cron: "0 21 * * 0"
 
 concurrency:
   group: weekly-quantum-radio

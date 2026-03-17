@@ -3,15 +3,15 @@
 ## 1. Schedule target
 
 Desired local time:
-- Monday 06:30 KST
+- Monday 06:00 KST
 
 Equivalent UTC cron target:
-- Sunday 21:30 UTC
+- Sunday 21:00 UTC
 
-## 2. Why use 30 minutes past the hour
+## 2. Top-of-hour tradeoff
 
 GitHub Actions scheduled workflows can be delayed during high-load periods, especially around the top of the hour.
-Choosing a half-hour slot reduces collision with common schedule spikes.
+The requested production target is still Monday 06:00 KST, so the workflow now uses the exact top-of-hour schedule.
 
 ## 3. Public repository risk
 
@@ -34,7 +34,6 @@ If timing becomes critical, move scheduling to an external scheduler while keepi
 Telegram bundle per successful weekly run:
 1. weekly text digest
 2. weekly full MP3
-3. weekly headlines MP3
 
 ## 6. Manual backfill
 

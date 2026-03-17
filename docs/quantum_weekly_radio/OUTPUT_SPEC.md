@@ -58,7 +58,6 @@ A compact machine-readable object containing:
 
 ### Audio
 - `weekly_full.mp3`
-- `weekly_headlines.mp3`
 
 ## Telegram format
 
@@ -71,8 +70,3 @@ Digest text:
 
 ### Message 2
 Full MP3 audio
-
-### Message 3
-Headlines-only MP3 audio
-
-If only one audio file succeeds, still deliver it and clearly note degraded mode in `summary.md`.

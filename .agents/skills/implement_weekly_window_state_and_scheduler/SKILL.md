@@ -1,6 +1,6 @@
 ---
 name: implement_weekly_window_state_and_scheduler
-description: Implement weekly run-state persistence, last-successful-run windowing, safe catch-up behavior, and a Monday 06:30 KST workflow.
+description: Implement weekly run-state persistence, last-successful-run windowing, safe catch-up behavior, and a Monday 06:00 KST workflow.
 ---
 
 
@@ -22,7 +22,7 @@ description: Implement weekly run-state persistence, last-successful-run windowi
 
     ## Workflow
     - keep `workflow_dispatch`
-    - schedule for Monday 06:30 KST equivalent
+    - schedule for Monday 06:00 KST equivalent
     - upload artifacts
     - publish summary
     - optionally support heartbeat ping
@@ -30,4 +30,3 @@ description: Implement weekly run-state persistence, last-successful-run windowi
     ## Anti-patterns
     - do not use naive “last 7 days” if state already exists
     - do not silently discard late windows
-
