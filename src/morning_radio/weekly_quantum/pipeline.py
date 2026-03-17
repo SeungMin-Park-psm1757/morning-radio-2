@@ -109,20 +109,16 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
     (run_dir / "message_digest.md").write_text(message_digest, encoding="utf-8")
 
     full_audio_path: Path | None = None
-    headlines_audio_path: Path | None = None
     audio_metadata, audio_degraded, audio_notes = _generate_audio_outputs(
         config=config,
         editor=editor,
         run_dir=run_dir,
         full_script_text=weekly_show.full_script_text,
-        headlines_script_text=weekly_show.headline_script_text,
     )
     degraded_modes.extend(audio_degraded)
     runtime_notes.extend(audio_notes)
     if audio_metadata["full"]["generated"]:
         full_audio_path = run_dir / "weekly_full.mp3"
-    if audio_metadata["headlines"]["generated"]:
-        headlines_audio_path = run_dir / "weekly_headlines.mp3"
 
     delivery = DeliveryResult()
     if config.telegram_enabled:
@@ -131,12 +127,10 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
             digest_markdown=message_digest,
             title=weekly_show.show_title,
             full_audio_path=full_audio_path,
-            headlines_audio_path=headlines_audio_path,
             public_links=public_links_for_run(
                 config=config,
                 run_dir=run_dir,
                 full_audio_path=full_audio_path,
-                headlines_audio_path=headlines_audio_path,
             ),
         )
         degraded_modes.extend(_error_code(error) for error in delivery.errors)
@@ -209,7 +203,6 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
                 "source_health_json": str(run_dir / "source_health.json"),
                 "summary_md": str(run_dir / "summary.md"),
                 "weekly_full_mp3": str(full_audio_path) if full_audio_path else None,
-                "weekly_headlines_mp3": str(headlines_audio_path) if headlines_audio_path else None,
             },
             "audio": audio_metadata,
             "delivery": delivery.to_dict(),
@@ -299,11 +292,9 @@ def _generate_audio_outputs(
     editor: WeeklyGeminiStudio | None,
     run_dir: Path,
     full_script_text: str,
-    headlines_script_text: str,
 ) -> tuple[dict[str, dict[str, Any]], list[str], list[str]]:
     metadata: dict[str, dict[str, Any]] = {
         "full": {"generated": False, "path": None},
-        "headlines": {"generated": False, "path": None},
     }
     degraded_modes: list[str] = []
     runtime_notes: list[str] = []
@@ -331,25 +322,6 @@ def _generate_audio_outputs(
         degraded_modes.append("tts_full_failed")
         metadata["full"]["error"] = str(exc)
         runtime_notes.append(f"tts_full:{exc}")
-
-    try:
-        audio_bytes, mime_type = editor.generate_audio(headlines_script_text)
-        headlines_path = write_audio_output(
-            run_dir=run_dir,
-            audio_bytes=audio_bytes,
-            mime_type=mime_type,
-            file_name="weekly_headlines.mp3",
-            bitrate_kbps=config.tts_bitrate_kbps,
-        )
-        metadata["headlines"] = {
-            "generated": True,
-            "mime_type": mime_type,
-            "path": headlines_path.name,
-        }
-    except Exception as exc:
-        degraded_modes.append("tts_headlines_failed")
-        metadata["headlines"]["error"] = str(exc)
-        runtime_notes.append(f"tts_headlines:{exc}")
 
     return metadata, degraded_modes, runtime_notes
 
@@ -381,7 +353,7 @@ def _quota_log(
         "selected_clusters": len(selected_clusters),
         "llm_story_limit": config.llm_story_limit,
         "estimated_text_calls": (len(briefs) + 1) if config.llm_enabled else 0,
-        "estimated_tts_calls": 2 if config.tts_enabled else 0,
+        "estimated_tts_calls": 1 if config.tts_enabled else 0,
     }
 
 
@@ -396,7 +368,7 @@ def _last_delivery_status(
         return "dry_run"
     if not run_succeeded:
         return "degraded"
-    if delivery.errors or any(mode in degraded_modes for mode in ("tts_full_failed", "tts_headlines_failed", "script_fallback_template")):
+    if delivery.errors or any(mode in degraded_modes for mode in ("tts_full_failed", "script_fallback_template")):
         return "degraded"
     if config.skip_telegram or config.skip_tts or config.skip_llm:
         return "skipped"
@@ -440,7 +412,6 @@ def _build_summary(
         f"- estimated_text_calls: {quota_log['estimated_text_calls']}",
         f"- estimated_tts_calls: {quota_log['estimated_tts_calls']}",
         f"- full_audio_generated: {audio_metadata['full']['generated']}",
-        f"- headlines_audio_generated: {audio_metadata['headlines']['generated']}",
         f"- delivery_text_sent: {delivery_status.text_sent}",
         f"- delivery_full_audio_sent: {delivery_status.full_audio_sent}",
         f"- delivery_headlines_audio_sent: {delivery_status.headlines_audio_sent}",

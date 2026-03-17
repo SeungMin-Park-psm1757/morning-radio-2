@@ -199,4 +199,4 @@ def test_pipeline_writes_audio_outputs_when_tts_enabled(tmp_path: Path, monkeypa
     run_dir = run_weekly_quantum_pipeline(config, now=now)
 
     assert (run_dir / "weekly_full.mp3").read_bytes() == b"fake-mp3"
-    assert (run_dir / "weekly_headlines.mp3").read_bytes() == b"fake-mp3"
+    assert not (run_dir / "weekly_headlines.mp3").exists()

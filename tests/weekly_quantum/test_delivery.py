@@ -16,7 +16,6 @@ def test_public_links_for_run_includes_audio_when_present(tmp_path: Path):
         config=config,
         run_dir=run_dir,
         full_audio_path=full_audio,
-        headlines_audio_path=None,
     )
 
     assert links == {
