@@ -1,0 +1,26 @@
+[
+  {
+    "source_key": "tqi_daily",
+    "requested": true,
+    "success": true,
+    "http_status": 200,
+    "items_seen": 26,
+    "items_in_window": 9,
+    "detail_fetches": 3,
+    "fallback_mode_used": "html_list",
+    "error": null,
+    "latency_ms": 430
+  },
+  {
+    "source_key": "physorg_quantum",
+    "requested": true,
+    "success": true,
+    "http_status": 200,
+    "items_seen": 18,
+    "items_in_window": 7,
+    "detail_fetches": 2,
+    "fallback_mode_used": "rss_then_html",
+    "error": null,
+    "latency_ms": 510
+  }
+]

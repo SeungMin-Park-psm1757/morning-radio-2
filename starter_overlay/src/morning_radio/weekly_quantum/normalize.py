@@ -1,0 +1,48 @@
+from __future__ import annotations
+
+import re
+from urllib.parse import urlsplit, urlunsplit
+
+from .models import NormalizedArticle, RawArticle
+
+
+_TOKEN_RE = re.compile(r"[a-z0-9가-힣]+")
+
+
+def canonicalize_url(url: str) -> str:
+    parts = urlsplit(url)
+    clean = parts._replace(query="", fragment="")
+    return urlunsplit(clean).rstrip("/")
+
+
+def normalize_title(title: str) -> str:
+    return re.sub(r"\s+", " ", title).strip()
+
+
+def title_tokens(title: str) -> list[str]:
+    return _TOKEN_RE.findall(title.lower())
+
+
+def normalize_article(raw: RawArticle) -> NormalizedArticle:
+    normalized = RawArticle(
+        source_key=raw.source_key,
+        source_label=raw.source_label,
+        source_url=raw.source_url,
+        section_key=raw.section_key,
+        title=normalize_title(raw.title),
+        canonical_url=canonicalize_url(raw.canonical_url),
+        published_at=raw.published_at,
+        author=raw.author,
+        excerpt=re.sub(r"\s+", " ", raw.excerpt).strip(),
+        site_brief_bullets=list(raw.site_brief_bullets),
+        tags=list(raw.tags),
+        raw_confidence=raw.raw_confidence,
+        collection_method=raw.collection_method,
+        detail_fetch_attempted=raw.detail_fetch_attempted,
+        detail_fetch_succeeded=raw.detail_fetch_succeeded,
+    )
+    return NormalizedArticle(
+        raw=normalized,
+        normalized_title=normalized.title,
+        title_tokens=title_tokens(normalized.title),
+    )
