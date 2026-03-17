@@ -9,73 +9,84 @@ from zoneinfo import ZoneInfo
 
 from .collectors.base import SourceConfig
 
-_SOURCE_SPECS: tuple[tuple[str, str, str, str], ...] = (
-    ("tqi_daily", "The Quantum Insider Daily", "https://thequantuminsider.com/category/daily/", "tqi"),
+_SOURCE_SPECS: tuple[tuple[str, str, str, str, int], ...] = (
+    ("tqi_daily", "The Quantum Insider Daily", "https://thequantuminsider.com/category/daily/", "tqi", 40),
     (
         "tqi_national",
         "The Quantum Insider National",
         "https://thequantuminsider.com/category/daily/national/",
         "tqi",
+        20,
     ),
     (
         "tqi_business",
         "The Quantum Insider Business",
         "https://thequantuminsider.com/category/daily/business/",
         "tqi",
+        20,
     ),
     (
         "tqi_research",
         "The Quantum Insider Research and Tech",
         "https://thequantuminsider.com/category/daily/researchandtech/",
         "tqi",
+        20,
     ),
     (
         "tqi_education",
         "The Quantum Insider Education",
         "https://thequantuminsider.com/category/exclusives/education/",
         "tqi",
+        8,
     ),
     (
         "tqi_insights",
         "The Quantum Insider Insights",
         "https://thequantuminsider.com/category/exclusives/insights/",
         "tqi",
+        8,
     ),
     (
         "physorg_quantum",
         "Phys.org Quantum Physics",
         "https://phys.org/physics-news/quantum-physics/?hl=ko-KR",
         "physorg",
+        30,
     ),
     (
         "quantumzeitgeist_research",
         "Quantum Zeitgeist Research News",
         "https://quantumzeitgeist.com/category/quantum-research-news/",
         "quantumzeitgeist",
+        25,
     ),
     (
         "qcr_news",
         "Quantum Computing Report News",
         "https://quantumcomputingreport.com/news/",
         "qcr",
+        25,
     ),
     (
         "qcr_our_take",
         "Quantum Computing Report Our Take",
         "https://quantumcomputingreport.com/our-take/",
         "qcr",
+        10,
     ),
     (
         "qcr_qnalysis",
         "Quantum Computing Report Qnalysis",
         "https://quantumcomputingreport.com/qnalysis/",
         "qcr",
+        8,
     ),
     (
         "quantumfrontiers_news",
         "Quantum Frontiers News",
         "https://quantumfrontiers.com/category/news/",
         "quantumfrontiers",
+        10,
     ),
 )
 
@@ -239,9 +250,9 @@ def build_source_configs(max_items_per_source: int) -> list[SourceConfig]:
             start_urls=[start_url],
             collection_mode="direct",
             kind=kind,
-            max_items_per_run=max_items_per_source,
+            max_items_per_run=min(default_cap, max_items_per_source),
         )
-        for key, label, start_url, kind in _SOURCE_SPECS
+        for key, label, start_url, kind, default_cap in _SOURCE_SPECS
     ]
     validate_source_configs(configs)
     return configs

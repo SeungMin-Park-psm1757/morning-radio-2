@@ -41,8 +41,14 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
     run_dir.mkdir(parents=True, exist_ok=True)
 
     source_configs = build_source_configs(config.max_list_items_per_source)
-    raw_items, source_health = _collect_sources(source_configs)
-    normalized = [normalize_article(item) for item in raw_items]
+    raw_items, source_health = _collect_sources(
+        source_configs,
+        timeout_seconds=config.request_timeout_seconds,
+        retry_count=config.retry_count,
+    )
+    windowed_raw_items = _filter_items_for_window(raw_items, window)
+    _apply_window_counts(source_health, raw_items, windowed_raw_items)
+    normalized = [normalize_article(item) for item in windowed_raw_items]
     for item in normalized:
         score_article(item, now=current)
 
@@ -91,6 +97,7 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
         window=window,
         run_dir=run_dir,
         raw_items_count=len(raw_items),
+        in_window_count=len(windowed_raw_items),
         normalized_count=len(normalized),
         clusters=clusters,
         selected_clusters=selected_clusters,
@@ -101,11 +108,14 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
     (run_dir / "summary.md").write_text(summary, encoding="utf-8")
 
     run_succeeded = any(health.success for health in source_health)
+    should_advance_state = run_succeeded and not config.dry_run
     new_state = WeeklyRunState(
         last_attempt_started_at=current,
-        last_successful_window_end=window.end if run_succeeded else state.last_successful_window_end,
-        last_successful_run_dir=str(run_dir) if run_succeeded else state.last_successful_run_dir,
-        last_delivery_status="ok" if run_succeeded and not delivery.errors else "degraded",
+        last_successful_window_end=window.end if should_advance_state else state.last_successful_window_end,
+        last_successful_run_dir=str(run_dir) if should_advance_state else state.last_successful_run_dir,
+        last_delivery_status="dry_run"
+        if config.dry_run
+        else ("ok" if run_succeeded and not delivery.errors else "degraded"),
         last_source_health=[health.to_dict() for health in source_health],
     )
     save_run_state(config.state_path, new_state)
@@ -144,13 +154,18 @@ def run_weekly_quantum_pipeline(config: WeeklyQuantumConfig, *, now: datetime | 
     return run_dir
 
 
-def _collect_sources(source_configs: list[SourceConfig]) -> tuple[list[RawArticle], list[SourceHealth]]:
+def _collect_sources(
+    source_configs: list[SourceConfig],
+    *,
+    timeout_seconds: int,
+    retry_count: int,
+) -> tuple[list[RawArticle], list[SourceHealth]]:
     raw_items: list[RawArticle] = []
     source_health: list[SourceHealth] = []
 
     for source_config in source_configs:
         collector_cls = _COLLECTOR_REGISTRY[source_config.kind]
-        collector = collector_cls()
+        collector = collector_cls(timeout_seconds=timeout_seconds, retry_count=retry_count)
         result = collector.collect(source_config)
         raw_items.extend(result.items)
         if result.health is None:
@@ -166,6 +181,34 @@ def _collect_sources(source_configs: list[SourceConfig]) -> tuple[list[RawArticl
         else:
             source_health.append(result.health)
     return raw_items, source_health
+
+
+def _filter_items_for_window(raw_items: list[RawArticle], window: CollectionWindow) -> list[RawArticle]:
+    filtered: list[RawArticle] = []
+    for item in raw_items:
+        if item.published_at is None:
+            filtered.append(item)
+            continue
+        published_at = item.published_at.astimezone(UTC)
+        if window.start <= published_at <= window.end:
+            filtered.append(item)
+    return filtered
+
+
+def _apply_window_counts(
+    source_health: list[SourceHealth],
+    raw_items: list[RawArticle],
+    windowed_raw_items: list[RawArticle],
+) -> None:
+    seen_counts: dict[str, int] = {}
+    window_counts: dict[str, int] = {}
+    for item in raw_items:
+        seen_counts[item.source_key] = seen_counts.get(item.source_key, 0) + 1
+    for item in windowed_raw_items:
+        window_counts[item.source_key] = window_counts.get(item.source_key, 0) + 1
+    for health in source_health:
+        health.items_seen = seen_counts.get(health.source_key, 0)
+        health.items_in_window = window_counts.get(health.source_key, 0)
 
 
 def _degraded_modes(config: WeeklyQuantumConfig, source_health: list[SourceHealth]) -> list[str]:
@@ -186,6 +229,7 @@ def _build_summary(
     window: CollectionWindow,
     run_dir: Path,
     raw_items_count: int,
+    in_window_count: int,
     normalized_count: int,
     clusters: list[StoryCluster],
     selected_clusters: list[StoryCluster],
@@ -202,6 +246,7 @@ def _build_summary(
         f"- bootstrap: {window.bootstrap}",
         f"- manual_override: {window.manual_override}",
         f"- raw_items: {raw_items_count}",
+        f"- items_in_window: {in_window_count}",
         f"- normalized_items: {normalized_count}",
         f"- clusters: {len(clusters)}",
         f"- selected_clusters: {len(selected_clusters)}",
