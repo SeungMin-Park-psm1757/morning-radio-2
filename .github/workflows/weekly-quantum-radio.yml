@@ -7,6 +7,10 @@ on:
         description: "Skip Telegram delivery"
         required: false
         default: "false"
+      skip_llm:
+        description: "Skip LLM summarization and script generation"
+        required: false
+        default: "false"
       skip_tts:
         description: "Skip TTS generation"
         required: false
@@ -50,8 +54,19 @@ jobs:
           pip install -e .
 
       - name: Run weekly quantum briefing
+        shell: bash
         run: |
-          python -m morning_radio.weekly_quantum.cli
+          args=()
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          if [ "${{ github.event.inputs.skip_llm }}" = "true" ]; then
+            args+=(--skip-llm)
+          fi
+          if [ "${{ github.event.inputs.skip_tts }}" = "true" ]; then
+            args+=(--skip-tts)
+          fi
+          python -m morning_radio.weekly_quantum.cli "${args[@]}"
 
       - name: Publish run summary
         shell: bash
