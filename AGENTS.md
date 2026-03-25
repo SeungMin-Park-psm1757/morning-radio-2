@@ -2,19 +2,19 @@
 
 ## Repository context
 
-This repository already has a working daily morning-radio pipeline.
-It currently:
-- collects article candidates,
+This repository now operates as a **weekly quantum-only** pipeline.
+It:
+- collects quantum article candidates directly from approved sources,
 - ranks and clusters them,
 - writes digest/script/output artifacts,
 - optionally generates TTS audio,
 - and delivers results to Telegram.
 
-The new work in this repo is a **weekly quantum-only** pipeline that should reuse as much of the stable logic as possible without destabilizing the current daily flow.
+Some planning documents still describe the earlier migration plan from a daily pipeline. Treat those references as historical context, not a current requirement.
 
 ## Primary goal
 
-Add a new pipeline that:
+Maintain the pipeline that:
 - runs every Monday 06:00 KST,
 - covers the last successful-run window for the approved quantum source sites,
 - gathers articles directly from site category pages / RSS / lightweight detail pages,
@@ -32,7 +32,7 @@ Add a new pipeline that:
    - `.github/workflows/weekly-quantum-radio.yml`
    - `tests/weekly_quantum/`
 
-2. Do not break the existing daily CLI or daily workflow unless the user explicitly asks for a refactor.
+2. The root CLI should continue to launch the weekly pipeline.
 
 3. Reuse existing repo modules when safe:
    - Gemini text generation

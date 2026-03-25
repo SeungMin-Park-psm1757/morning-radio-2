@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from .audio import write_audio_output
-from .collectors import PhysOrgCollector, QCRCollector, QuantumFrontiersCollector, QuantumZeitgeistCollector, TQICollector
+from .collectors import FQCFCollector, PhysOrgCollector, QCRCollector, QuantumFrontiersCollector, QuantumZeitgeistCollector, TQICollector
 from .collectors.base import SourceConfig
 from .config import WeeklyQuantumConfig, build_source_configs
 from .dedup import cluster_articles, exact_dedup
@@ -27,6 +27,7 @@ class _CollectorProtocol(Protocol):
 
 _COLLECTOR_REGISTRY: dict[str, type[_CollectorProtocol]] = {
     "tqi": TQICollector,
+    "fqcf": FQCFCollector,
     "physorg": PhysOrgCollector,
     "quantumzeitgeist": QuantumZeitgeistCollector,
     "qcr": QCRCollector,

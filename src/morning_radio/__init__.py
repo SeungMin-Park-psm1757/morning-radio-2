@@ -1,1 +1,1 @@
-"""Morning radio news briefing package."""
+"""Weekly quantum morning radio package."""

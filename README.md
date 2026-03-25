@@ -1,23 +1,14 @@
 # Morning Radio
 
-Morning Radio builds a weekday Korean morning news briefing from the last 24 hours and ships it as:
-
-- a ranked article digest
-- a two-speaker radio script
-- an optional MP3 audio file
-- a Telegram summary and audio delivery
-- a simple HTML archive page
+This repository now ships only the weekly quantum briefing pipeline.
 
 ## What It Does
 
-- Collects recent news for Korea politics, global affairs, military strategy, weapon systems, AI, quantum, and the economy.
-- Scores articles by recency, source reliability, signal terms, and low-signal penalties.
-- Clusters near-duplicate coverage so one event is represented once, with extra signal matching for finance and geopolitical follow-ups.
-- Produces a messenger digest with a short summary and a short "why it matters" line.
-- Generates a two-speaker Korean radio script with a calm host and a brighter analyst voice.
-- Uses Gemini TTS to create an MP3 when enabled.
-- Supports Telegram private chats, groups, channels, and topic threads.
-- Writes per-run output plus an HTML archive index.
+- Collects quantum news directly from approved sources and weekly digest pages.
+- Includes FQCF Daily Quantum issue posts and expands each issue into its linked external articles.
+- Deduplicates overlapping coverage across sources.
+- Builds Korean category briefs, a two-speaker radio script, an optional full-length MP3, and a Telegram digest.
+- Writes per-run artifacts under `output/weekly_quantum/YYYYMMDD-HHMMSS/`.
 
 ## Quick Start
 
@@ -25,10 +16,9 @@ Morning Radio builds a weekday Korean morning news briefing from the last 24 hou
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -e .
-copy .env.example .env
 ```
 
-Set `GEMINI_API_KEY` in `.env`, then run:
+Set `GEMINI_API_KEY` in your environment or `.env`, then run:
 
 ```bash
 morning-radio
@@ -37,74 +27,38 @@ morning-radio
 For a no-API smoke test:
 
 ```bash
-morning-radio --skip-llm --skip-tts
+morning-radio --skip-llm --skip-tts --dry-run
 ```
 
 ## Main Outputs
 
-Each run writes to `output/YYYYMMDD-HHMMSS/`.
+Each run writes to `output/weekly_quantum/YYYYMMDD-HHMMSS/`.
 
-- `news_items.json`: all collected items
-- `selected_items.json`: clustered and selected representatives
-- `category_briefs.json`: category-level brief objects
-- `radio_show.json`: final radio show metadata
-- `radio_script.md`: markdown radio script
-- `radio_script.txt`: plain text transcript for TTS
-- `message_digest.md`: Telegram-friendly digest
-- `summary.md`: run summary and quota log
-- `index.html`: run-level archive page
-- `audio.mp3`: generated TTS audio when available
-- `run_metadata.json`: machine-readable run metadata
-
-The root `output/index.html` file lists recent runs as a lightweight archive page.
-
-## Key Environment Variables
-
-- `GEMINI_API_KEY`
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_CHAT_ID`
-- `TELEGRAM_THREAD_ID`
-- `MORNING_RADIO_TELEGRAM_SILENT`
-- `MORNING_RADIO_PUBLIC_ARCHIVE_BASE_URL`
-- `MORNING_RADIO_ENABLE_TTS`
-- `MORNING_RADIO_TTS_MODE`
-  - `daily`: lighter weekday mode
-  - `manual`: higher-bitrate manual mode
-- `MORNING_RADIO_HOST_VOICE`
-- `MORNING_RADIO_ANALYST_VOICE`
-- `MORNING_RADIO_TTS_SPEED`
-- `MORNING_RADIO_TTS_TURN_PAUSE`
-- `MORNING_RADIO_TTS_RETRY_COUNT`
-- `MORNING_RADIO_TTS_RETRY_DELAY_SECONDS`
-- `MORNING_RADIO_ARCHIVE_LIMIT`
+- `raw_items.json`
+- `normalized_items.json`
+- `clusters.json`
+- `selected_items.json`
+- `category_briefs.json`
+- `weekly_show.json`
+- `weekly_script.md`
+- `weekly_script.txt`
+- `weekly_headlines.txt`
+- `message_digest.md`
+- `summary.md`
+- `source_health.json`
+- `run_metadata.json`
+- `weekly_full.mp3` when TTS succeeds
 
 ## GitHub Actions
 
-The workflow is defined in `.github/workflows/daily-radio.yml`.
+The workflow is defined in `.github/workflows/weekly-quantum-radio.yml`.
 
-- Schedule: weekday `06:00 KST`
-- The workflow uses `daily` TTS mode by default
-- Telegram delivery is enabled when the Telegram secrets are present
-- Optional repository variables:
-  - `MORNING_RADIO_TELEGRAM_SILENT` for quiet group or channel delivery
-  - `MORNING_RADIO_PUBLIC_ARCHIVE_BASE_URL` to append archive links in Telegram
-
-Required secrets:
-
-- `GEMINI_API_KEY`
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_CHAT_ID`
-- `TELEGRAM_THREAD_ID` only for topic-based groups
-
-Group and channel notes:
-
-- Use a group or channel `chat_id` to broadcast the same digest to everyone in that destination.
-- Use `TELEGRAM_THREAD_ID` only for topic-enabled supergroups.
-- When `MORNING_RADIO_PUBLIC_ARCHIVE_BASE_URL` is set, Telegram messages include direct links to the run archive, digest, summary, and audio file when available.
+- Schedule: Monday `06:00 KST`
+- Entry point: `morning-radio` or `python -m morning_radio`
+- Telegram delivery is enabled only when the Telegram secrets are present
 
 ## Notes
 
-- Text generation and TTS share the same Gemini API key but use different models.
-- The main free-tier bottleneck is TTS, not text generation.
-- If TTS fails, the pipeline still delivers the text digest and preserves run metadata.
-- If LLM generation fails, the package falls back to heuristic summaries so the pipeline still completes.
+- The root CLI now points to the weekly quantum pipeline.
+- Legacy daily news briefing code has been removed.
+- Gemini generation and TTS both degrade safely when disabled or unavailable.

@@ -1,4 +1,5 @@
 from .base import Collector, CollectorResult, SourceConfig
+from .fqcf import FQCFCollector
 from .physorg import PhysOrgCollector
 from .qcr import QCRCollector
 from .quantumfrontiers import QuantumFrontiersCollector
@@ -9,6 +10,7 @@ __all__ = [
     "Collector",
     "CollectorResult",
     "SourceConfig",
+    "FQCFCollector",
     "TQICollector",
     "PhysOrgCollector",
     "QuantumZeitgeistCollector",

@@ -11,6 +11,7 @@ SOURCE_WEIGHTS = {
     "tqi_research": 1.1,
     "tqi_education": 0.95,
     "tqi_insights": 0.95,
+    "fqcf_daily": 1.0,
     "physorg_quantum": 1.1,
     "quantumzeitgeist_research": 1.0,
     "qcr_news": 1.1,

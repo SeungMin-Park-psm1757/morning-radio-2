@@ -6,7 +6,7 @@ from morning_radio.weekly_quantum.config import build_source_configs, validate_s
 
 def test_build_source_configs_matches_approved_source_count():
     configs = build_source_configs(80)
-    assert len(configs) == 12
+    assert len(configs) == 13
     assert all(0 < config.max_items_per_run <= 80 for config in configs)
     assert min(config.max_items_per_run for config in configs) == 8
     assert max(config.max_items_per_run for config in configs) == 40

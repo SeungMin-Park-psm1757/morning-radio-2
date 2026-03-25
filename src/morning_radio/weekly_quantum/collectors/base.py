@@ -65,6 +65,9 @@ class BaseCollector:
             try:
                 response = self.session.get(url, timeout=self.timeout_seconds)
                 response.raise_for_status()
+                apparent = getattr(response, "apparent_encoding", None)
+                if apparent and (not response.encoding or response.encoding.lower() == "iso-8859-1"):
+                    response.encoding = apparent
                 return response.text, response.status_code
             except requests.RequestException as exc:
                 last_error = exc

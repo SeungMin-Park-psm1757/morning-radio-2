@@ -47,6 +47,13 @@ _SOURCE_SPECS: tuple[tuple[str, str, str, str, int], ...] = (
         8,
     ),
     (
+        "fqcf_daily",
+        "FQCF Daily Quantum",
+        "https://www.fqcf.org/niabbs5/bbs.php?bbstable=news",
+        "fqcf",
+        40,
+    ),
+    (
         "physorg_quantum",
         "Phys.org Quantum Physics",
         "https://phys.org/physics-news/quantum-physics/?hl=ko-KR",

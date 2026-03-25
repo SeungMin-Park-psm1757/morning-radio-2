@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "morning-radio"
 version = "0.1.0"
-description = "Daily Korean morning news radio briefing powered by Gemini and GitHub Actions."
+description = "Weekly Korean quantum radio briefing powered by Gemini and GitHub Actions."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-morning-radio = "morning_radio.cli:main"
+morning-radio = "morning_radio.weekly_quantum.cli:main"
 morning-radio-weekly-quantum = "morning_radio.weekly_quantum.cli:main"
 
 [tool.setuptools]

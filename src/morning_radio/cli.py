@@ -1,15 +1,8 @@
 from __future__ import annotations
 
-from morning_radio.config import build_parser, load_config
-from morning_radio.pipeline import run_pipeline
+from morning_radio.weekly_quantum.cli import main
 
-
-def main() -> None:
-    parser = build_parser()
-    args = parser.parse_args()
-    config = load_config(args)
-    run_dir = run_pipeline(config)
-    print(f"Morning radio build completed: {run_dir}")
+__all__ = ["main"]
 
 
 if __name__ == "__main__":
