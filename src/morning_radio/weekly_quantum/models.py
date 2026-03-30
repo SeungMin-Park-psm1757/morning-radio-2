@@ -82,6 +82,7 @@ class BriefItem:
     why_it_matters: str
     sources: list[str]
     cluster_id: str
+    easy_explainer: str = ""
     confidence: str = "medium"
 
     def to_dict(self) -> dict[str, Any]:

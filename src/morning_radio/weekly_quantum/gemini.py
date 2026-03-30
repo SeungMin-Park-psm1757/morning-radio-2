@@ -122,6 +122,7 @@ class WeeklyGeminiStudio:
                 '      "headline": "string",\n'
                 '      "summary": "1-2 Korean sentences",\n'
                 '      "why_it_matters": "1 short Korean sentence",\n'
+                '      "easy_explainer": "1 short Korean sentence with one easy analogy or plain-language explanation",\n'
                 '      "confidence": "high|medium|low"\n'
                 "    }\n"
                 "  ]\n"
@@ -132,6 +133,7 @@ class WeeklyGeminiStudio:
                 "- `lead_summary` must summarize the week's movement in this category, not list headlines.\n"
                 "- `summary` should explain what changed using the excerpt/bullets only.\n"
                 "- `why_it_matters` should be shorter than `summary`.\n"
+                "- `easy_explainer` should make the topic easier for a non-expert with one light analogy or easy comparison.\n"
                 "- Keep the `cluster_id` values from the input unchanged.\n"
                 "- Never include URLs.\n\n"
                 f"Clusters:\n{_json_dumps([_cluster_payload(cluster) for cluster in clusters])}"
@@ -158,6 +160,7 @@ class WeeklyGeminiStudio:
                     why_it_matters=str(raw_item.get("why_it_matters", "")).strip(),
                     sources=sorted({member.raw.source_label for member in cluster.members}),
                     cluster_id=cluster.cluster_id,
+                    easy_explainer=str(raw_item.get("easy_explainer", "")).strip(),
                     confidence=str(raw_item.get("confidence", "medium")).strip() or "medium",
                 )
             )
@@ -180,8 +183,8 @@ class WeeklyGeminiStudio:
             model=self.config.editor_model,
             system_instruction=(
                 "You write a Korean weekly radio script for two speakers. "
-                "The host is calm and organized. "
-                "The analyst is bright, concise, and contextual. "
+                "The host is bright, brisk, and easy to listen to. "
+                "The analyst is lively, concise, and very good at making hard topics feel simple. "
                 "Every dialogue line must begin with the exact speaker labels provided. "
                 "Avoid hype and do not overstate thin evidence."
             ),
@@ -203,8 +206,12 @@ class WeeklyGeminiStudio:
                 "- `full_script_markdown` must contain dialogue only, no headings or bullet lists.\n"
                 f"- Every spoken line in `full_script_markdown` must start with `{self.config.host_name}:` or `{self.config.analyst_name}:`.\n"
                 f"- Every spoken line in `headline_script_text` must start with `{self.config.host_name}:`.\n"
+                "- Start with one short greeting and move straight into the first topic.\n"
+                "- Do not introduce the speakers by name or explain the format.\n"
                 "- Use short, natural turn-taking and avoid long monologues.\n"
                 "- Cover each populated category once and avoid repeating the same story in multiple segments.\n"
+                "- For each covered story, include one short easy analogy or plain-language explanation.\n"
+                "- Keep the energy bright and light, but still informative.\n"
                 "- Mention uncertainty plainly when details are still developing.\n"
                 "- Do not include URLs.\n\n"
                 f"Briefs:\n{_json_dumps([brief.to_dict() for brief in briefs])}"
@@ -324,12 +331,12 @@ class WeeklyGeminiStudio:
             "Do not add narration, labels, or explanations outside the transcript.\n"
             "Blank lines indicate silent handoff beats and must not be spoken.\n\n"
             "## Audio Profile\n"
-            f"- {self.config.host_name}: a calm male weekly-news host with grounded authority.\n"
-            f"- {self.config.analyst_name}: a bright female analyst with crisp pacing and warm energy.\n\n"
+            f"- {self.config.host_name}: a bright, friendly weekly-news host with clear pacing.\n"
+            f"- {self.config.analyst_name}: a lively analyst with warm energy and easy explanations.\n\n"
             "## Director Notes\n"
             f"- Deliver at about {self.config.tts_speed_multiplier:.2f}x standard Korean radio pace.\n"
             f"- After each speaker change, leave a pause around {self.config.tts_turn_pause_multiplier:.2f}x a normal handoff.\n"
-            "- Keep diction clear, natural, and steady.\n"
+            "- Keep diction clear, natural, slightly upbeat, and never rushed.\n"
             "- Read every line exactly as written in Korean.\n\n"
             "## Transcript\n"
             f"{transcript}"

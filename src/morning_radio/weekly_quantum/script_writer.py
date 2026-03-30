@@ -22,10 +22,10 @@ def build_weekly_show(
     config: WeeklyQuantumConfig,
     window: CollectionWindow,
 ) -> WeeklyShow:
-    opening = f"{config.host_name}: 안녕하세요. 이번 주 양자 브리핑을 정리해보겠습니다."
-    closing = f"{config.host_name}: 여기까지 이번 주 양자 브리핑이었습니다."
     full_script = build_full_script(briefs, config)
     headline_script = build_headlines_script(briefs, config)
+    opening = next((line for line in full_script.splitlines() if line.strip()), "")
+    closing = next((line for line in reversed(full_script.splitlines()) if line.strip()), "")
     return WeeklyShow(
         window_start=window.start,
         window_end=window.end,
@@ -53,9 +53,9 @@ def build_weekly_show(
 
 def build_full_script(briefs: list[CategoryBrief], config: WeeklyQuantumConfig) -> str:
     lines: list[str] = [
-        f"{config.host_name}: 안녕하세요. 이번 주 양자 기술 흐름을 짚어보겠습니다.",
+        f"{config.host_name}: 좋은 아침입니다. 이번 주 양자 흐름 바로 들어가볼게요.",
         "",
-        f"{config.analyst_name}: 산업과 연구, 정책 신호까지 한 번에 정리해드리겠습니다.",
+        f"{config.analyst_name}: 좋아요. 이번 주에도 재미있게 풀어볼 만한 포인트만 경쾌하게 골라왔습니다.",
         "",
     ]
 
@@ -63,38 +63,42 @@ def build_full_script(briefs: list[CategoryBrief], config: WeeklyQuantumConfig) 
     for brief in briefs:
         if not brief.items:
             continue
-        lines.append(f"{config.host_name}: 먼저 {brief.category_label} 흐름부터 보겠습니다.")
+        lines.append(f"{config.host_name}: 먼저 {brief.category_label} 흐름부터 가볍게 짚어볼까요?")
         lines.append("")
         lines.append(f"{config.analyst_name}: {brief.lead_summary}")
         lines.append("")
         for item in brief.items:
-            lines.append(f"{config.host_name}: 이번 주에 눈에 띈 이슈는 {item.headline}입니다.")
+            lines.append(f"{config.host_name}: 이번 주에 특히 눈에 띈 이슈는 {item.headline}입니다.")
             lines.append("")
             lines.append(f"{config.analyst_name}: {item.summary}")
             lines.append("")
-            lines.append(f"{config.host_name}: 이 대목은 왜 중요할까요?")
+            lines.append(f"{config.host_name}: 여기서 우리가 꼭 봐야 할 포인트는 뭘까요?")
             lines.append("")
             lines.append(f"{config.analyst_name}: {item.why_it_matters}")
+            lines.append("")
+            lines.append(f"{config.host_name}: 어렵지 않게 비유하면 어떻게 이해하면 좋을까요?")
+            lines.append("")
+            lines.append(f"{config.analyst_name}: {item.easy_explainer}")
             lines.append("")
             emitted += 1
 
     if emitted == 0:
         lines.extend(
             [
-                f"{config.host_name}: 이번 주는 아직 대표 스토리를 강하게 묶기 어려운 상황입니다.",
+                f"{config.host_name}: 이번 주는 아직 대표 스토리를 강하게 묶을 만큼 신호가 충분하진 않았습니다.",
                 "",
-                f"{config.analyst_name}: 수집과 요약 경로는 유지한 채, 다음 실행에서 더 완성도 높은 주간본으로 이어가겠습니다.",
+                f"{config.analyst_name}: 그래도 수집 흐름은 살아 있으니, 다음 실행에서는 더 선명한 주간본으로 바로 이어갈 수 있습니다.",
                 "",
             ]
         )
 
-    lines.append(f"{config.host_name}: 여기까지 이번 주 양자 브리핑이었습니다.")
+    lines.append(f"{config.host_name}: 오늘 브리핑은 여기까지입니다. 다음 주에도 핵심만 산뜻하게 가져올게요.")
     return "\n".join(lines).strip()
 
 
 def build_headlines_script(briefs: list[CategoryBrief], config: WeeklyQuantumConfig) -> str:
     lines: list[str] = [
-        f"{config.host_name}: 이번 주 양자 분야 헤드라인입니다.",
+        f"{config.host_name}: 좋은 아침입니다. 이번 주 양자 헤드라인 바로 짚어볼게요.",
         "",
     ]
     emitted = 0

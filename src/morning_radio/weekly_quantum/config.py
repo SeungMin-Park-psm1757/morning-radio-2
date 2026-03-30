@@ -9,6 +9,9 @@ from zoneinfo import ZoneInfo
 
 from .collectors.base import SourceConfig
 
+_HOST_LABEL = "진행자"
+_ANALYST_LABEL = "해설"
+
 _SOURCE_SPECS: tuple[tuple[str, str, str, str, int], ...] = (
     ("tqi_daily", "The Quantum Insider Daily", "https://thequantuminsider.com/category/daily/", "tqi", 40),
     (
@@ -348,11 +351,11 @@ def load_weekly_quantum_config(args: argparse.Namespace | None = None) -> Weekly
         skip_tts=args.skip_tts,
         skip_telegram=args.skip_telegram,
         dry_run=args.dry_run,
-        host_name=os.getenv("WEEKLY_QUANTUM_HOST_NAME", "민준"),
-        analyst_name=os.getenv("WEEKLY_QUANTUM_ANALYST_NAME", "서연"),
+        host_name=_HOST_LABEL,
+        analyst_name=_ANALYST_LABEL,
         host_voice=os.getenv("WEEKLY_QUANTUM_HOST_VOICE", "Charon"),
         analyst_voice=os.getenv("WEEKLY_QUANTUM_ANALYST_VOICE", "Leda"),
-        tts_speed_multiplier=float(os.getenv("WEEKLY_QUANTUM_TTS_SPEED", "1.0")),
+        tts_speed_multiplier=float(os.getenv("WEEKLY_QUANTUM_TTS_SPEED", "0.97")),
         tts_turn_pause_multiplier=float(os.getenv("WEEKLY_QUANTUM_TTS_TURN_PAUSE", "1.0")),
         tts_retry_count=int(os.getenv("WEEKLY_QUANTUM_TTS_RETRY_COUNT", "1")),
         tts_retry_delay_seconds=int(os.getenv("WEEKLY_QUANTUM_TTS_RETRY_DELAY_SECONDS", "40")),

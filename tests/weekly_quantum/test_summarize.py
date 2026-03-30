@@ -47,4 +47,5 @@ def test_heuristic_briefs_group_clusters_by_category():
         "analysis_outlook",
     ]
     assert briefs[0].items[0].headline == "Quantum startup lands new funding"
+    assert briefs[0].items[0].easy_explainer
     assert briefs[1].lead_summary

@@ -84,6 +84,27 @@ def _why_it_matters(cluster: StoryCluster, spec: CategorySpec) -> str:
     return "당장 큰 숫자보다도 다음 주 해석 프레임을 정리하는 데 도움이 됩니다."
 
 
+def _easy_explainer(cluster: StoryCluster, spec: CategorySpec) -> str:
+    text = " ".join(
+        [
+            cluster.representative.raw.title.casefold(),
+            cluster.representative.raw.excerpt.casefold(),
+            " ".join(cluster.representative.raw.tags).casefold(),
+        ]
+    )
+    if spec.key == "industry_business":
+        if any(term in text for term in ("funding", "investment", "partner", "enterprise", "시장", "투자", "협력")):
+            return "쉽게 보면 기술 시연 단계를 지나, 이제는 누가 먼저 매장 진열대에 올릴지 경쟁하는 분위기입니다."
+        return "쉽게 보면 연구실 안 이야기였던 기술이 실제 제품 설명서로 옮겨 적히기 시작한 장면에 가깝습니다."
+    if spec.key == "research_technology":
+        if any(term in text for term in ("error correction", "algorithm", "optimization", "software", "오류", "최적화")):
+            return "쉽게 말해 복잡한 미로에서 길을 더 빨리 찾는 요령을 다듬는 과정이라고 보면 됩니다."
+        return "쉽게 보면 계산 엔진의 핵심 부품을 하나씩 더 정교하게 손보는 흐름이라고 이해하면 됩니다."
+    if spec.key == "policy_ecosystem":
+        return "쉽게 보면 경기 결과를 내기 전에 경기장과 규칙, 선수층을 먼저 정비하는 단계라고 보면 됩니다."
+    return "쉽게 말해 지금 당장 점수를 매기기보다, 다음 시험 범위를 미리 표시해두는 설명에 가깝습니다."
+
+
 def _lead_summary(spec: CategorySpec, items: list[BriefItem]) -> str:
     if not items:
         return f"이번 주 {spec.label}에서는 방송에 넣을 만한 대표 스토리가 충분하지 않았습니다."
@@ -107,6 +128,7 @@ def _heuristic_brief(spec: CategorySpec, clusters: list[StoryCluster]) -> Catego
                 why_it_matters=_why_it_matters(cluster, spec),
                 sources=sorted({member.raw.source_label for member in cluster.members}),
                 cluster_id=cluster.cluster_id,
+                easy_explainer=_easy_explainer(cluster, spec),
                 confidence=_cluster_confidence(cluster),
             )
         )
